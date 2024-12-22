@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="boardDAO">
+	<resultMap id="selectBoardResult" type="study.board.dto.BoardDTO">
+		<id column="board_id" property="boardId"/>
+		<result column="board_title" property="boardTitle"/>
+		<result column="board_title" property="boardContent"/>
+		<result column="writer_id" property="writerId"/>
+	</resultMap>
+	
+	<!-- 게시글 목록 조회 -->
+	<select id="selectBoardList" resultMap="selectBoardResult">
+		SELECT 
+			board_id, board_title, board_content, writer_id
+		FROM public."Board"
+		ORDER BY 
+			CAST(board_id AS INTEGER) ASC
+	</select>
+	
+	<!-- 게시글 목록 저장 -->
+	<update id="updateBoard" parameterType="study.board.dto.BoardDTO">
+		UPDATE public."Board"
+		SET
+			board_title = #{boardTitle},
+			board_content = #{boardContent}
+		WHERE
+			board_id = #{boardId}
+	</update>
+</mapper>
