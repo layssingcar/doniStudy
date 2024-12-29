@@ -21,6 +21,7 @@
     * closest(): 현재 요소에서 가장 가까운 상위 요소 검색
 
     [ 구현한 기능 ]
+    * 데이터 검색
     * Editable 옵션
     * 순번 옵션
     * 정렬 옵션 (ASC, DESC)
@@ -39,6 +40,7 @@
 $(document).ready(function () {
     const grid = $("#grid");        // 테이블
     const gridBtn = $('.grid-btn'); // 버튼 컨테이너
+    let selRowsBoardId = [];        // 선택된 행의 아이디 값을 담을 배열
 
     // 기본 colNames 설정
     let colNames = ['아이디', '제목', '내용', '작성자'];
@@ -61,6 +63,49 @@ $(document).ready(function () {
             createGrid();
         }
     });
+
+    // 검색 버튼 클릭
+    $(".search-btn").on("click", function() {
+        searchRows();
+    });
+
+    // 검색어 엔터
+    $(".search-input").on("keydown", function(event) {
+        if (event.key === "Enter") {
+            searchRows();
+        }
+    });
+
+    // 검색 함수
+    function searchRows() {
+        const searchInput = $(".search-input").val(); // 입력된 검색어 가져오기
+
+        grid.jqGrid('setGridParam', {
+            search: true, 
+            postData: {
+                filters: JSON.stringify({
+                    groupOp: "OR",
+                    rules: [
+                        {
+                            field: "boardTitle",
+                            op: "cn", // contains
+                            data: searchInput
+                        }, 
+                        {
+                            field: "boardContent",
+                            op: "cn", // contains
+                            data: searchInput
+                        }, 
+                        {
+                            field: "writerId",
+                            op: "cn", // contains
+                            data: searchInput
+                        }
+                    ]
+                })
+            }
+        }).trigger("reloadGrid");
+    }
 
     // 초기 checked 옵션 설정
     $('input[type="checkbox"], input[type="radio"]').each(function() {
@@ -228,12 +273,16 @@ $(document).ready(function () {
         if (selectType === 'radio') { // Single
             selectedRows = grid.jqGrid('getGridParam', 'selrow');
             if (selectedRows) {
+                const boardId = grid.jqGrid("getRowData", selectedRows).boardId;
+                selRowsBoardId.push(boardId); // 선택된 행의 아이디 값 배열에 push
                 grid.jqGrid('delRowData', selectedRows);
             }
         } else if (selectType === 'checkbox') { // Multi
             selectedRows = grid.jqGrid('getGridParam', 'selarrrow');
             if (selectedRows.length > 0) {
                 for (let i = selectedRows.length - 1; i >= 0; i--) { // 역순으로 삭제
+                    const boardId = grid.jqGrid('getRowData', selectedRows[i]).boardId;
+                    selRowsBoardId.push(boardId); // 선택된 행의 아이디 값 배열에 push
                     grid.jqGrid('delRowData', selectedRows[i]);
                 }
             }
@@ -268,11 +317,11 @@ $(document).ready(function () {
         $.ajax({
             url: '/board/updateList', 
             contentType: 'application/json',
-            data: JSON.stringify(dataList), 
+            data: JSON.stringify({"dataList" : dataList, "selRowsBoardId" : selRowsBoardId}), 
             method: 'PUT', 
             success: function(data) {
-                console.log(data);
                 alert("저장되었습니다.");
+                location.reload();
             }
         })
     });
@@ -389,6 +438,7 @@ $(document).ready(function () {
             rowNum: dataList.length,    // 모든 행 표시
             rowList: [10, 20, 50, 100], // 페이지 당 행 개수 선택목록
             pager: '#pager',            // 페이저 요소
+            search: true,
             loadComplete: function(data) {
                 // 순번 칼럼 숨기기
                 if (!$('#rowNumY').is(':checked')) {

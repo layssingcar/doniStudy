@@ -12,19 +12,49 @@
 	<!-- 게시글 목록 조회 -->
 	<select id="selectBoardList" resultMap="selectBoardResult">
 		SELECT 
-			board_id, board_title, board_content, writer_id
+			board_id
+			, board_title
+			, board_content
+			, writer_id
 		FROM public."Board"
 		ORDER BY 
 			CAST(board_id AS INTEGER) ASC
 	</select>
 	
-	<!-- 게시글 목록 저장 -->
-	<update id="updateBoard" parameterType="study.board.dto.BoardDTO">
+	<!-- 게시글 목록 수정 -->
+	<update id="updateBoardList" parameterType="study.board.dto.BoardDTO">
 		UPDATE public."Board"
 		SET
-			board_title = #{boardTitle},
-			board_content = #{boardContent}
+			board_title = #{boardTitle}
+			, board_content = #{boardContent}
+			, writer_id = #{writerId}
 		WHERE
 			board_id = #{boardId}
 	</update>
+	
+	<!-- 게시글 목록 추가 -->
+	<insert id="insertBoardList" parameterType="study.board.dto.BoardDTO">
+		INSERT INTO public."Board" (
+			board_id
+			, board_title
+			, board_content
+			, writer_id
+		) VALUES (
+			(SELECT
+				MAX(CAST(BOARD_ID AS INTEGER)) + 1
+			FROM public."Board")
+			, #{boardTitle}
+			, #{boardContent}
+			, #{writerId}
+		)
+	</insert>
+	
+	<!-- 게시글 목록 삭제 -->
+	<delete id="deleteBoardList" parameterType="list">
+		DELETE FROM public."Board"
+			WHERE board_id IN 
+			<foreach collection="list" item="id" open="(" close=")" separator=",">
+				#{id}
+			</foreach>
+	</delete>
 </mapper>

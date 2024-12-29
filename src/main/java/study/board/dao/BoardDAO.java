@@ -18,8 +18,16 @@ public class BoardDAO /* extends EgovComAbstractDAO */ {
 		return sqlSession.selectList("boardDAO.selectBoardList");
 	}
 
-	public int updateBoard(BoardDTO board) {
-		return sqlSession.update("boardDAO.updateBoard", board);
+	public int updateBoardList(BoardDTO board) {
+		return sqlSession.update("boardDAO.updateBoardList", board);
+	}
+	
+	public int insertBoardList(BoardDTO board) {
+		return sqlSession.insert("boardDAO.insertBoardList", board);
+	}
+
+	public int deleteBoardList(List<String> boardId) {
+		return sqlSession.delete("boardDAO.deleteBoardList", boardId);
 	}
 	
 }

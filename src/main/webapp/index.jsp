@@ -16,14 +16,22 @@
 <body>
     <div class="grid-container">
         <div class="grid-table">
-            <!-- 버튼 컨테이너 -->
-            <div class="grid-btn"></div>
-    
-            <!-- jQGrid 테이블 -->
+            <!-- 검색 컴포넌트 -->
+            <div class="search-compo">
+                <input type="text" class="search-input">
+                <button class="btn search-btn">검색</button>
+            </div>
+
             <div>
-                <table id="grid"></table>
-                <div class="page-info"></div>
-                <div id="pager"></div>
+                <!-- 버튼 컨테이너 -->
+                <div class="grid-btn"></div>
+        
+                <!-- jQGrid 테이블 -->
+                <div>
+                    <table id="grid"></table>
+                    <div class="page-info"></div>
+                    <div id="pager"></div>
+                </div>
             </div>
         </div>
         
