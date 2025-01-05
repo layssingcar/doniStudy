@@ -1,17 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>jQGrid</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/free-jqgrid@4.15.5/css/ui.jqgrid.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/free-jqgrid@4.15.5/js/jquery.jqgrid.min.js"></script>
+    <title>Toast UI Grid</title>
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css">
+    <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="/css/grid.css">
-    <script src="/js/jqGrid.js" defer></script>
+    <script src="/js/tuiGrid.js" defer></script>
 </head>
 <body>
     <div class="grid-container">
@@ -26,15 +24,11 @@
                 <!-- 버튼 컨테이너 -->
                 <div class="grid-btn"></div>
         
-                <!-- jQGrid 테이블 -->
-                <div>
-                    <table id="grid"></table>
-                    <div class="page-info"></div>
-                    <div id="pager"></div>
-                </div>
+                <!-- Toast UI Grid 테이블 -->
+                <div id="grid"></div>
             </div>
         </div>
-        
+
         <!-- 선택 옵션 -->
         <div class="options">
             <!-- Editable -->
@@ -150,10 +144,6 @@
                         <label for="rowSize" class="title-label">페이징 당 행 개수</label>
                         <input type="number" id="rowSize" value="10">
                     </div>
-                    <!-- 행 옵션 설정 -->
-                    <!-- <div class="option-list">
-                        <label for="rowSize" class="title-label">행 옵션 설정</label>
-                    </div> -->
                     <!-- 페이징 수 -->
                     <div class="option-list option-item input-option">
                         <label for="pageCount" class="title-label">페이징 수</label>

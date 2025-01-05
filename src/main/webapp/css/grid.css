@@ -41,6 +41,7 @@
     overflow-y: auto;
 }
 
+/* 그리드 헤더 */
 .ui-jqgrid .ui-jqgrid-htable th {
     height: 27px;
     font-weight: bold;

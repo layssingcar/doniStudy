@@ -39,9 +39,13 @@ public class BoardServiceImpl implements BoardService{
 			
 			ObjectMapper objectMapper = new ObjectMapper();
 			map.remove("id"); // jqGrid Checkbox 번호 값 제거
-			BoardDTO board =  objectMapper.convertValue(map, BoardDTO.class);
+			BoardDTO board = new BoardDTO();
+			board.setBoardId((String)map.get("boardId"));
+			board.setBoardTitle((String)map.get("boardTitle"));
+			board.setBoardContent((String)map.get("boardContent"));
+			board.setWriterId((String)map.get("writerId"));
 			
- 			int result = boardDAO.updateBoardList(board);
+			int result = boardDAO.updateBoardList(board);
 			
 			// 수정된 데이터가 없을 경우 데이터 추가
 			if (result == 0 && board.getBoardTitle() != null && board.getBoardContent() != null && board.getWriterId() != null) {
@@ -55,10 +59,13 @@ public class BoardServiceImpl implements BoardService{
 		}
 		
 		// 선택된 행 데이터 삭제
-		int result = boardDAO.deleteBoardList(boardId);
+		int result = 0;
+		if (boardId != null) {
+			result = boardDAO.deleteBoardList(boardId);
+		}
 		
 		// 삭제 실패 시 예외 발생
-		if (result == 0) {
+		if (boardId != null && result == 0) {
 			throw new IllegalArgumentException("삭제 실패");
 		}
 		
