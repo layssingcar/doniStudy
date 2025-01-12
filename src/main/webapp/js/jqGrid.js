@@ -326,6 +326,79 @@ $(document).ready(function () {
         })
     });
 
+    // Up 버튼
+    gridBtn.on('click', '.grid-up-btn', function() {
+        const selectType = $('input[name="selectType"]:checked').val();
+        let selectedRows = [];
+
+        if (selectType === 'radio') { // Single
+            selectedRows = [grid.jqGrid('getGridParam', 'selrow')];
+        } else if (selectType === 'checkbox') { // Multi
+            selectedRows = grid.jqGrid('getGridParam', 'selarrrow');
+        }
+
+        let copyRows = [...selectedRows]; // 선택된 행 아이디를 복사한 배열(행 이동 시 원본 배열의 순서가 바뀌는 문제 해결용)
+        copyRows.sort((a,b) => {
+            const c1 = parseInt(a.match(/\d+/)[0]); // a에서 숫자 추출
+            const c2 = parseInt(b.match(/\d+/)[0]); // b에서 숫자 추출
+            return c1 - c2;
+        });
+
+        if (selectedRows.length > 0) {
+            for (let i = 0; i < selectedRows.length; i++) {
+                const rowId = copyRows[i];
+                const prevRowId = grid.jqGrid("getPrevRowId", rowId); // 이전 행 ID
+                
+                if (prevRowId) { // 이전 행이 있을 경우
+                    moveRow(rowId, prevRowId, "up"); // 행 이동 함수 호출
+                }
+            }
+        }
+    });
+
+    // Down 버튼
+    gridBtn.on('click', '.grid-down-btn', function() {
+        const selectType = $('input[name="selectType"]:checked').val();
+        let selectedRows = [];
+
+        if (selectType === 'radio') { // Single
+            selectedRows = [grid.jqGrid('getGridParam', 'selrow')];
+        } else if (selectType === 'checkbox') { // Multi
+            selectedRows = grid.jqGrid('getGridParam', 'selarrrow');
+        }
+
+        let copyRows = [...selectedRows]; // 선택된 행 아이디를 복사한 배열(행 이동 시 원본 배열의 순서가 바뀌는 문제 해결용)
+        copyRows.sort((a,b) => {
+            const c1 = parseInt(a.match(/\d+/)[0]); // a에서 숫자 추출
+            const c2 = parseInt(b.match(/\d+/)[0]); // b에서 숫자 추출
+            return c1 - c2;
+        });
+
+        if (selectedRows.length > 0) {
+            // 선택된 행을 역순으로 처리하여 인덱스 문제를 방지
+            for (let i = selectedRows.length - 1; i >= 0; i--) {
+                const rowId = copyRows[i];
+                const prevRowId = grid.jqGrid("getNextRowId", rowId); // 다음 행 ID
+                
+                if (prevRowId) { // 이전 행이 있을 경우
+                    moveRow(rowId, prevRowId, "down"); // 행 이동 함수 호출
+                }
+            }
+        }
+    });
+
+    // 행 이동 함수
+    function moveRow(fromRowId, toRowId, direction) {
+        const rowData = grid.jqGrid("getRowData", fromRowId); // 선택된 행 데이터 가져오기
+        grid.jqGrid("delRowData", fromRowId); // 현재 행 삭제
+        grid.jqGrid("addRowData", fromRowId, rowData, direction === "up" ? "before" : "after", toRowId); // 새로운 위치에 삽입
+
+        const $radioButton = $(`#${fromRowId}`).find("td input"); // 라디오,체크박스 버튼 찾기
+        $radioButton.prop("checked", true); // 체크 상태 유지
+
+        grid.jqGrid("setSelection", fromRowId); // 행 선택 상태 유지
+    }
+
     // 말줄임표 옵션
     $('#ellipsisY').on('change', function() {
         if ($(this).is(':checked')) {
@@ -387,10 +460,10 @@ $(document).ready(function () {
     });
 
     // 페이지 정보 표시 함수
-    function showPageInfo() {
+    function showPageInfo(newPage) {
         let totalCount = grid.jqGrid('getGridParam', 'records');    // 전체 건 수
         let totalPages = grid.jqGrid('getGridParam', 'lastpage');   // 총 페이지 수
-        let currentPage = grid.jqGrid('getGridParam', 'page');      // 현재 페이지 번호
+        let currentPage = newPage === undefined ? grid.jqGrid('getGridParam', 'page') : newPage;      // 현재 페이지 번호
         
         if ($('#totalCountYnY').is(':checked')) {
             if ($('#pagingYnY').is(':checked')) { // 페이징 사용
@@ -454,8 +527,38 @@ $(document).ready(function () {
                 } else {
                     $('#pager').hide();
                 }
+            },
+            onPaging : function(pgButton){
+                let newPage = $(this).jqGrid('getGridParam', 'page');
+                if (pgButton === 'next') {
+                    newPage++;
+                } else if (pgButton === 'prev') {
+                    newPage--;
+                } else if (pgButton === 'first') {
+                    newPage = 1;
+                } else if (pgButton === 'last') {
+                    newPage = $(this).jqGrid('getGridParam', 'lastpage');
+                } else {
+                    newPage = parseInt(pgButton, 10);
+                }
+
+                showPageInfo(newPage);
             }
         });
         dataList = newDataList; // 복사한 데이터를 원본 데이터로 변경
     }
+
+    // jqGrid에 이전 행 ID를 가져오는 함수 추가
+    $.jgrid.extend({
+        getPrevRowId: function (rowId) {
+            const ids = this.getDataIDs(); // 모든 행 ID 가져오기
+            const index = ids.indexOf(rowId); // 현재 행의 인덱스
+            return index > 0 ? ids[index - 1] : null; // 이전 행 ID 반환
+        },
+        getNextRowId: function (rowId) {
+            const ids = this.getDataIDs(); // 모든 행 ID 가져오기
+            const index = ids.indexOf(rowId); // 현재 행의 인덱스
+            return index < ids.length - 1 ? ids[index + 1] : null; // 다음 행 ID 반환
+        }
+    });
 });

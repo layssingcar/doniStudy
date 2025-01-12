@@ -60,7 +60,7 @@ public class BoardServiceImpl implements BoardService{
 		
 		// 선택된 행 데이터 삭제
 		int result = 0;
-		if (boardId != null) {
+		if (boardId != null && !boardId.isEmpty()) {
 			result = boardDAO.deleteBoardList(boardId);
 		}
 		
