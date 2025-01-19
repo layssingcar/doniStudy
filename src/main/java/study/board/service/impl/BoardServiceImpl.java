@@ -72,4 +72,8 @@ public class BoardServiceImpl implements BoardService{
 		return boardList.size();
 	}
 	
+	public List<String> getCheckboxList() {
+		return boardDAO.getCheckboxList();
+	}
+	
 }

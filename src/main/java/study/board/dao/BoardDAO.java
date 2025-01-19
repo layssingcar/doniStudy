@@ -29,5 +29,9 @@ public class BoardDAO /* extends EgovComAbstractDAO */ {
 	public int deleteBoardList(List<String> boardId) {
 		return sqlSession.delete("boardDAO.deleteBoardList", boardId);
 	}
+
+	public List<String> getCheckboxList() {
+		return sqlSession.selectList("boardDAO.getCheckboxList");
+	}
 	
 }

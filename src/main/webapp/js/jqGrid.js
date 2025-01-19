@@ -55,12 +55,39 @@ $(document).ready(function () {
     
     // 비동기로 데이터 읽어와 dataList에 저장
     let dataList = [];
+
+    // 데이터 원본을 복사해서 저장할 변수
+    let copyDataList; 
+
     $.ajax({
         url: '/board/selectList',   // 데이터 URL
         datatype: 'json',           // 데이터 타입
         success: function(data) {
             dataList = data;
             createGrid();
+            copyDataList = [...dataList]; // 원본을 복사해서 저장
+        }
+    });
+
+    // 체크박스 데이터 목록 가져오기
+    $.ajax({
+        url: '/getCheckboxList',
+        method: 'GET',
+        success: function (data) {
+            const searchCheckboxList = $('.search-checkbox-list');
+            data.forEach(function (item) {
+                // 체크박스 생성
+                const checkbox = `
+                    <div class="option-list">
+                        <input type="checkbox" id="${item}" value="${item}">
+                        <label for="${item}">${item}</label>
+                    </div>
+                `;
+                searchCheckboxList.append(checkbox);
+            });
+        },
+        error: function (error) {
+            console.error('체크박스 목록을 가져오는 데 실패했습니다:', error);
         }
     });
 
@@ -79,6 +106,28 @@ $(document).ready(function () {
     // 검색 함수
     function searchRows() {
         const searchInput = $(".search-input").val(); // 입력된 검색어 가져오기
+        const searchCheckbox = []; // 선택된 체크박스 값
+
+        // 선택된 체크박스 값 가져오기
+        $('.search-checkbox-list input[type="checkbox"]:checked').each(function() {
+            searchCheckbox.push($(this).val());
+        });
+
+        // dataList 초기화
+        dataList = copyDataList;
+
+        // 선택된 체크박스 값과 writerId가 일치하는 data만 필터링
+        const filterList = dataList.filter(item => { 
+            for (let value of searchCheckbox){
+                if (item.writerId === value) return item;
+            }
+        });
+
+        if (filterList.length > 0){ 
+            dataList = filterList; 
+        }
+
+        createGrid(); // 필터링된 데이터로 그리드 생성
 
         grid.jqGrid('setGridParam', {
             search: true, 
@@ -102,9 +151,10 @@ $(document).ready(function () {
                             data: searchInput
                         }
                     ]
+                        
                 })
             }
-        }).trigger("reloadGrid");
+        }).trigger("reloadGrid")
     }
 
     // 초기 checked 옵션 설정

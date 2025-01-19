@@ -11,4 +11,6 @@ public interface BoardService {
 
 	int updateBoardList(List<Map<String, Object>> boardList, List<String> boardId);
 
+	List<String> getCheckboxList();
+
 }

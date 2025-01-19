@@ -16,11 +16,14 @@
 <body>
     <div class="grid-container">
         <div class="grid-table">
-            <!-- 검색 컴포넌트 -->
+            <!-- 검색 Input 컴포넌트 -->
             <div class="search-compo">
                 <input type="text" class="search-input">
                 <button class="btn search-btn">검색</button>
             </div>
+
+            <!-- 검색 Checkbox 컴포넌트 -->
+            <div class="search-checkbox-list"></div>
 
             <div>
                 <!-- 버튼 컨테이너 -->

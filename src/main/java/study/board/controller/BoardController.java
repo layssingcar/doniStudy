@@ -52,4 +52,9 @@ public class BoardController {
 		return result + "";
 	}
 	
+	@RequestMapping(value="/getCheckboxList")
+	public List<String> getCheckboxList() {
+		return boardService.getCheckboxList();
+	}
+	
 }

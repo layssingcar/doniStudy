@@ -22,7 +22,13 @@
     cursor: pointer;
 }
 
-/* 검색 컴포넌트 */
+/* 검색 Checkbox 컴포넌트 */
+.search-checkbox-list {
+    display: flex;
+    gap: 20px;
+}
+
+/* 검색 Input 컴포넌트 */
 .search-compo {
     display: flex;
     justify-content: space-between;
